@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>運動傷害與疼痛就醫指南</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-sky-50 to-blue-100 min-h-screen text-slate-800 flex flex-col justify-between">
+
+    <!-- 頂部導覽列 -->
+    <header class="w-full bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-600 text-white p-2 rounded-xl shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-900">運動傷害與疼痛就醫指南</h1>
+                    <p class="text-xs text-slate-500">互動式智能分流系統</p>
+                </div>
+            </div>
+            <button id="reset-top-btn" onclick="resetQuiz()" class="hidden text-sm text-slate-500 hover:text-blue-600 font-medium transition flex items-center gap-1 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                重新開始
+            </button>
+        </div>
+    </header>
+
+    <!-- 主要內容區 -->
+    <main class="max-w-2xl w-full mx-auto px-4 py-8 flex-grow flex flex-col justify-center">
+        <div id="quiz-container" class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8 transition-all duration-300">
+            <!-- 內容會由 JavaScript 動態載入 -->
+        </div>
+    </main>
+
+    <!-- 頁尾免責聲明與版權 -->
+    <footer class="w-full bg-white/60 border-t border-slate-200 py-6 mt-auto">
+        <div class="max-w-3xl mx-auto px-4 text-center text-xs text-slate-500 space-y-2">
+            <p class="font-medium text-slate-600">⚠️ 醫療免責聲明：本指南僅供自我檢視與初步就醫方向參考，不能替代專業醫師之診斷、治療或醫療建議。若有任何急重症或劇烈不適，請務必立即尋求專業醫療協助或前往急診。</p>
+            <p>© 2026 運動傷害與疼痛就醫指南 | 專業物理治療與就醫分流系統</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript 邏輯與決策樹資料庫 -->
+    <script>
+        // 完整的決策樹資料結構（完全對應您的流程圖邏輯）
+        const decisionTree = {
+            "start": {
+                question: "請問您的狀況是否為「外力傷害」？",
+                subtitle: "（例如：有被撞擊到、腳踝扭傷、突然拉到、挫傷等）",
+                options: [
+                    { text: "是，有外力介入/突發受傷", next: "q_external_blood" },
+                    { text: "否，沒有突然的外力，疼痛隨著動作產生或漸進發生", next: "q_chronic_move" }
+                ]
+            },
+
+            // 分支 A：外力傷害系列
+            "q_external_blood": {
+                question: "是否有大量的外傷出血？",
+                subtitle: "（例如：有不止的血或深層大傷口）",
+                options: [
+                    { text: "是，有大量出血/深傷口", result: "res_er" },
+                    { text: "否，沒有重大外傷出血", next: "q_external_deform" }
+                ]
+            },
+            "q_external_deform": {
+                question: "受傷後，外觀是否有變形或立即腫脹？",
+                subtitle: "（例如：明顯骨骼歪曲、受傷處快速腫大）",
+                options: [
+                    { text: "是，明顯變形或受傷處明顯腫脹", result: "res_er" },
+                    { text: "否，無明顯外觀變形", next: "q_external_nerve" }
+                ]
+            },
+            "q_external_nerve": {
+                question: "受傷後，是否有神經麻木或小便失禁的現象？",
+                subtitle: "（例如：下肢失去知覺、刺痛感、或無法控制小便）",
+                options: [
+                    { text: "是，有神經麻木或小便失禁", result: "res_neuro" },
+                    { text: "否，無神經麻木或失禁", next: "q_external_can_move" }
+                ]
+            },
+            "q_external_can_move": {
+                question: "是否能稍微活動受傷部位？",
+                subtitle: "（評估關節或肌肉自主活動能力）",
+                options: [
+                    { text: "是，可以稍微活動，疼痛還能忍受", next: "q_ex_mild_check" },
+                    { text: "否，動作會產生無法忍耐的劇痛", next: "q_ex_severe_check" }
+                ]
+            },
+
+            // 能活動 (疼痛還能忍受)
+            "q_ex_mild_check": {
+                question: "前往有 X 光的復健科門診 — 檢查後是否有結構損傷？",
+                subtitle: "（例如：X光或超音波診斷出骨裂、韌帶或肌腱斷裂）",
+                options: [
+                    { text: "是，有結構損傷（骨裂、斷裂）", next: "q_ex_mild_surgery" },
+                    { text: "否，僅拉傷或發炎", result: "res_pt_inj_only" }
+                ]
+            },
+            "q_ex_mild_surgery": {
+                question: "經醫師評估後，是否需要開刀治療？",
+                subtitle: "（確認是否需手術介入修補）",
+                options: [
+                    { text: "是，需要開刀手術", result: "res_surgery_pt" },
+                    { text: "否，不需開刀", result: "res_pt_injection" }
+                ]
+            },
+
+            // 無法活動 (產生無法忍耐的疼痛)
+            "q_ex_severe_check": {
+                question: "前往醫院骨科門診 — 檢查後是否有結構損傷？",
+                subtitle: "（例如：骨裂、韌帶肌腱斷裂）",
+                options: [
+                    { text: "是，有結構損傷", next: "q_ex_severe_surgery" },
+                    { text: "否，僅拉傷或發炎", result: "res_pt_injection" }
+                ]
+            },
+            "q_ex_severe_surgery": {
+                question: "經骨科醫師評估後，是否需要開刀？",
+                subtitle: "（確認是否需接受手術固定或修補）",
+                options: [
+                    { text: "是，需要開刀", result: "res_surgery_pt" },
+                    { text: "否，不需開刀", result: "res_pt_injection" }
+                ]
+            },
+
+            // 分支 B：無外力介入，疼痛隨動作產生
+            "q_chronic_move": {
+                question: "是否能稍微活動疼痛部位？",
+                subtitle: "（評估關節或肌肉在無外力下的活動狀況）",
+                options: [
+                    { text: "是，可以稍微活動，疼痛還能忍受", result: "res_pt_only" },
+                    { text: "否，動作會產生無法忍耐的疼痛", next: "q_ch_severe_check" }
+                ]
+            },
+            "q_ch_severe_check": {
+                question: "前往醫院骨科門診 — 檢查後是否有結構損傷？",
+                subtitle: "（例如：退化、骨裂、嚴重韌帶肌腱撕裂）",
+                options: [
+                    { text: "是，有結構損傷", next: "q_ch_severe_surgery" },
+                    { text: "否，僅拉傷或發炎", result: "res_pt_injection" }
+                ]
+            },
+            "q_ch_severe_surgery": {
+                question: "經醫師評估後，是否需要開刀？",
+                subtitle: "（確認是否需手術介入）",
+                options: [
+                    { text: "是，需要開刀", result: "res_surgery_pt" },
+                    { text: "否，不需開刀", result: "res_pt_injection" }
+                ]
+            }
+        };
+
+        // 結果資料庫
+        const resultsData = {
+            "res_er": {
+                title: "立即前往醫院急診",
+                tag: "緊急狀況",
+                badgeClass: "bg-red-100 text-red-700 border-red-300",
+                borderClass: "border-red-200",
+                iconBg: "bg-red-600 text-white",
+                description: "您的傷口有大量出血、明顯外傷變形、腫脹或嚴重急症疑慮。請立刻前往鄰近醫院急診室，由急診醫師進行初步生命徵象維持與緊急處置。",
+                showBooking: false
+            },
+            "res_neuro": {
+                title: "建議就醫科別：神經外科",
+                tag: "神經系統警訊",
+                badgeClass: "bg-orange-100 text-orange-700 border-orange-300",
+                borderClass: "border-orange-200",
+                iconBg: "bg-orange-600 text-white",
+                description: "伴隨神經麻木或小便失禁等症狀，可能涉及神經根壓迫或脊椎神經受損，建議尋求神經外科醫師進行進一步神經學檢查與影像掃描。",
+                showBooking: false
+            },
+            "res_pt_inj_only": {
+                title: "建議處置：物理治療 或 復健科注射治療",
+                tag: "保守治療 / 軟組織修復",
+                badgeClass: "bg-emerald-100 text-emerald-700 border-emerald-300",
+                borderClass: "border-emerald-200",
+                iconBg: "bg-emerald-600 text-white",
+                description: "已排除結構大礙（僅拉傷或發炎）。建議可接受物理治療（儀器、徒手、運動治療）或由復健科醫師評估進行增生注射治療，加速組織修復。",
+                showBooking: true
+            },
+            "res_surgery_pt": {
+                title: "建議處置：開刀後，前往物理治療",
+                tag: "術後黃金復健期",
+                badgeClass: "bg-blue-100 text-blue-700 border-blue-300",
+                borderClass: "border-blue-200",
+                iconBg: "bg-blue-600 text-white",
+                description: "經醫師評估後需要進行手術。完成手術並拆線/穩定後，強烈建議及早展開物理治療，以預防關節沾黏、恢復肌肉力量與正常活動功能。",
+                showBooking: true
+            },
+            "res_pt_injection": {
+                title: "建議處置：物理治療 或 注射治療",
+                tag: "保守與修復治療",
+                badgeClass: "bg-emerald-100 text-emerald-700 border-emerald-300",
+                borderClass: "border-emerald-200",
+                iconBg: "bg-emerald-600 text-white",
+                description: "雖有結構損傷但評估無需立刻開刀，或屬於拉傷發炎。建議配合物理治療消炎止痛、訓練核心穩定，必要時可諮詢復健注射治療。",
+                showBooking: true
+            },
+            "res_pt_only": {
+                title: "建議處置：物理治療",
+                tag: "物理治療 / 運動訓練",
+                badgeClass: "bg-emerald-100 text-emerald-700 border-emerald-300",
+                borderClass: "border-emerald-200",
+                iconBg: "bg-emerald-600 text-white",
+                description: "疼痛在活動時可忍受，無急重症與重大結構破壞。建議直接尋求專業物理治療師進行動作評估、徒手治療與運動處置，改善疼痛根源。",
+                showBooking: true
+            }
+        };
+
+        let historyStack = [];
+        let currentState = "start";
+
+        function render() {
+            const container = document.getElementById("quiz-container");
+            const resetTopBtn = document.getElementById("reset-top-btn");
+
+            // 控制上方重設按鈕顯示
+            if (historyStack.length > 0 || currentState.startsWith("res_")) {
+                resetTopBtn.classList.remove("hidden");
+            } else {
+                resetTopBtn.classList.add("hidden");
+            }
+
+            container.innerHTML = "";
+            let html = "";
+
+            // 判斷是否為結果頁
+            if (currentState.startsWith("res_")) {
+                const res = resultsData[currentState];
+                html = `
+                    <div class="fade-in space-y-6">
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full border ${res.badgeClass}">${res.tag}</span>
+                            <span class="text-xs text-slate-400 font-medium">篩檢結果建議</span>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-4">
+                                <div class="p-3 rounded-2xl ${res.iconBg} shadow-md flex-shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl md:text-2xl font-bold text-slate-900">${res.title}</h2>
+                                    <p class="text-slate-600 mt-2 leading-relaxed text-sm md:text-base">${res.description}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        ${res.showBooking ? `
+                        <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-6 text-white shadow-lg space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-bold text-lg">需要專業物理治療與評估嗎？</h3>
+                                    <p class="text-xs text-emerald-100 mt-0.5">專業物理治療師為您提供一對一動作評估與運動康復。</p>
+                                </div>
+                                <span class="bg-white/20 text-white text-xs px-2.5 py-1 rounded-full font-medium">專屬推薦</span>
+                            </div>
+                            <a href="https://linkgoods.com/soluckypt" target="_blank" rel="noopener noreferrer" 
+                               class="block w-full text-center bg-white text-emerald-700 hover:bg-emerald-50 font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-sm md:text-base">
+                                點我預約 🔗
+                            </a>
+                        </div>
+                        ` : ''}
+
+                        <div class="pt-4 flex flex-col sm:flex-row gap-3">
+                            <button onclick="goBack()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-3 px-4 rounded-xl transition flex items-center justify-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                </svg>
+                                上一題
+                            </button>
+                            <button onclick="resetQuiz()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-xl shadow transition flex items-center justify-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                重新檢測
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // 問題頁
+                const node = decisionTree[currentState];
+                const progressStep = historyStack.length + 1;
+
+                let optionsHtml = node.options.map(opt => `
+                    <button onclick="selectOption('${opt.next || opt.result}')" 
+                        class="w-full text-left bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 p-4 rounded-xl transition duration-200 flex items-center justify-between group shadow-sm hover:shadow">
+                        <span class="font-medium text-slate-800 group-hover:text-blue-700 text-base">${opt.text}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 group-hover:text-blue-600 flex-shrink-0 transition transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                `).join('');
+
+                html = `
+                    <div class="fade-in space-y-6">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">步驟 ${progressStep}</span>
+                            ${historyStack.length > 0 ? `
+                                <button onclick="goBack()" class="text-sm text-slate-500 hover:text-slate-800 font-medium flex items-center gap-1 transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                    </svg>
+                                    上一題
+                                </button>
+                            ` : ''}
+                        </div>
+
+                        <div class="space-y-2">
+                            <h2 class="text-xl md:text-2xl font-bold text-slate-900 leading-snug">${node.question}</h2>
+                            ${node.subtitle ? `<p class="text-sm text-slate-500">${node.subtitle}</p>` : ''}
+                        </div>
+
+                        <div class="space-y-3 pt-2">
+                            ${optionsHtml}
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function selectOption(nextState) {
+            historyStack.push(currentState);
+            currentState = nextState;
+            render();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goBack() {
+            if (historyStack.length > 0) {
+                currentState = historyStack.pop();
+                render();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function resetQuiz() {
+            historyStack = [];
+            currentState = "start";
+            render();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 初始化載入
+        window.onload = function() {
+            render();
+        };
+    </script>
+</body>
+</html>
